@@ -1,0 +1,43 @@
+{
+  "period": "last_30_days",
+  "platform_summary": {
+    "Instagram": {
+      "total_posts": 12,
+      "avg_likes": 342,
+      "avg_comments": 28,
+      "avg_shares": 14,
+      "top_performing_type": "product_highlight",
+      "engagement_rate": 4.2
+    },
+    "LinkedIn": {
+      "total_posts": 8,
+      "avg_likes": 95,
+      "avg_comments": 12,
+      "avg_shares": 22,
+      "top_performing_type": "educational",
+      "engagement_rate": 3.1
+    },
+    "X (Twitter)": {
+      "total_posts": 20,
+      "avg_likes": 48,
+      "avg_comments": 6,
+      "avg_shares": 31,
+      "top_performing_type": "community",
+      "engagement_rate": 2.9
+    }
+  },
+  "content_insights": [
+    "Posts with a question in the caption tend to generate noticeably more comments",
+    "A hashtag count of around 9-11 tends to yield the highest reach on Instagram",
+    "Educational content tends to peak on Tuesday and Thursday mornings",
+    "Product posts with a price-focused CTA tend to underperform curiosity-driven posts",
+    "Stories with polls tend to drive significantly more DM responses than static posts"
+  ],
+  "top_comments_sample": [
+    {"platform": "Instagram", "text": "This single-origin pour-over is exactly the morning ritual I needed!", "sentiment": "positive"},
+    {"platform": "Instagram", "text": "How long does shipping usually take for the Eclipse Espresso bags?", "sentiment": "neutral"},
+    {"platform": "LinkedIn", "text": "Love the sustainability angle on small-batch roasting — more brands should do this.", "sentiment": "positive"},
+    {"platform": "X (Twitter)", "text": "Ordered the Eclipse Espresso and the bag arrived torn, beans everywhere.", "sentiment": "negative"},
+    {"platform": "X (Twitter)", "text": "Do you have any plans to ship internationally?", "sentiment": "neutral"}
+  ]
+}
