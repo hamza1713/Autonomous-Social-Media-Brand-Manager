@@ -261,6 +261,51 @@ def render_agent_pipeline(done_count: int, running: bool):
     html += '</div>'
     st.markdown(html, unsafe_allow_html=True)
 
+@st.fragment(run_every=1.0)
+def render_live_monitoring():
+    shared = st.session_state.get("_shared", {})
+    crew_is_alive = (
+        st.session_state.get("_crew_thread") is not None
+        and not shared.get("done", True)
+    )
+    crew_error  = shared.get("error")
+    crew_done   = shared.get("done", False)
+    crew_result = shared.get("result")
+
+    done_count = shared.get("done_count", 0)
+    render_agent_pipeline(done_count, running=crew_is_alive)
+
+    if crew_error:
+        st.error(f"❌ Agent error: {crew_error}")
+        if st.button("↩️ Return to Brief", use_container_width=True):
+            for k in ["last_result", "run_timestamp", "_crew_thread", "_shared", "_toasted"]:
+                st.session_state.pop(k, None)
+            st.rerun()
+    elif crew_is_alive:
+        log_text = shared.get("log", "")
+        with st.expander("📡 Live Agent Logs", expanded=True):
+            escaped = (
+                log_text
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\n", "<br>")
+            )
+            st.markdown(
+                f"""
+                <div class="log-panel" id="log-scroll">
+                    {escaped}
+                </div>
+                <script>
+                    var el = document.getElementById('log-scroll');
+                    if (el) el.scrollTop = el.scrollHeight;
+                </script>
+                """,
+                unsafe_allow_html=True,
+            )
+    elif crew_done or crew_result is not None:
+        st.rerun()
+
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 def render_sidebar() -> tuple[str, list[str], str, str, str]:
@@ -515,37 +560,8 @@ def render_main(api_key: str, platforms: list[str], tone_intensity: str, creativ
         st.session_state["last_result"]  = crew_result
         st.session_state["run_timestamp"] = shared.get("timestamp", "")
 
-    if crew_is_alive or (crew_done and st.session_state.get("last_result") is None and not crew_error):
-        done_count = shared.get("done_count", 0)
-        render_agent_pipeline(done_count, running=crew_is_alive)
-
-        if crew_error:
-            st.error(f"❌ Agent error: {crew_error}")
-        elif crew_is_alive:
-            log_text = shared.get("log", "")
-            with st.expander("📡 Live Agent Logs", expanded=True):
-                # Auto-scroll: newest lines at the bottom; use a JS trick via HTML
-                escaped = (
-                    log_text
-                    .replace("&", "&amp;")
-                    .replace("<", "&lt;")
-                    .replace(">", "&gt;")
-                    .replace("\n", "<br>")
-                )
-                st.markdown(
-                    f"""
-                    <div class="log-panel" id="log-scroll">
-                        {escaped}
-                    </div>
-                    <script>
-                        var el = document.getElementById('log-scroll');
-                        if (el) el.scrollTop = el.scrollHeight;
-                    </script>
-                    """,
-                    unsafe_allow_html=True,
-                )
-            time.sleep(1.0)
-            st.rerun()
+    if crew_is_alive or (crew_done and st.session_state.get("last_result") is None):
+        render_live_monitoring()
         return
 
     # ── Display results ─────────────────────────────────────────────
